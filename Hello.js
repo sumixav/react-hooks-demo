@@ -1,7 +1,7 @@
 import React, { useReducer } from "react";
 
 const initState = {
-  count: 5
+  count: 5, name:"Sumi", prevCount:null
 };
 
 const init = initialCount => {
@@ -11,12 +11,14 @@ const init = initialCount => {
 const reducer = (state, action) => {
   switch (action.type) {
     case "increment":
-      return { count: state.count + 1 };
+      return { ...state, count: state.count + 1, prevCount: state.count };
     case "decrement":
-      return { count: state.count - 1 };
+      return { ...state, count: state.count - 1, prevCount: state.count };
     case "set":
-      return init(action.payload);
-    default:
+      return {...state, ...init(action.payload)};
+    case "undo":
+    return {...state, count: state.prevCount}
+    default:   
       throw new Error();
   }
 };
@@ -30,8 +32,9 @@ const Hello = () => {
         onChange={e => dispatch({ type: "set", payload: Number(e.target.value) })}
         placeholder="Set Count"
       />
-      <button onClick={() => dispatch({ type: "increment" })}>Inc</button>
-      <button onClick={() => dispatch({ type: "decrement" })}>Dec</button>
+      <button onClick={() => dispatch({ type: "decrement" })}>-</button>
+      <button onClick={() => dispatch({ type: "increment" })}>+</button>
+      <button onClick={() => dispatch({ type: "undo" })}>Undo</button>
     </div>
   );
 };
